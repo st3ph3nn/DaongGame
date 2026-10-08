@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Ready, Set, Safe! – Kids' Disaster Game</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#EAF6FF;--ink:#1F2A44;--card:#fff;--blue:#1E6FD9;--sun:#FFD84D;--leaf:#2FB36B;--coral:#FF6B5E;--grape:#7B5CE0;--line:#BFD9F2;--onbtn:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#142038;--ink:#F2F6FF;--card:#1E2E4F;--line:#355182}}
+:root[data-theme="dark"]{--bg:#142038;--ink:#F2F6FF;--card:#1E2E4F;--line:#355182}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 18px/1.4 'Baloo 2','Trebuchet MS',system-ui,sans-serif}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 18px;background:var(--blue);color:#fff;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+header b{font-size:1.35rem;font-weight:800}
+#starbox{background:var(--sun);color:#1F2A44;border-radius:99px;padding:2px 14px;font-weight:800}
+main{max-width:860px;margin:0 auto;padding:16px}
+h1{font-size:clamp(2rem,7vw,3.2rem);line-height:1.05;margin:8px 0;font-weight:800}
+h2{margin:6px 0 4px;font-weight:800}
+button{font:inherit;cursor:pointer;color:inherit}
+button:focus-visible,[tabindex]:focus-visible{outline:4px solid var(--grape);outline-offset:2px}
+.back{background:none;border:0;font-weight:700;color:var(--blue);padding:4px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:16px}
+.tile{border:0;border-radius:26px;padding:18px;text-align:left;color:#fff;font-weight:700;box-shadow:0 6px 0 rgba(0,0,0,.2)}
+.tile:active{transform:translateY(4px);box-shadow:0 2px 0 rgba(0,0,0,.2)}
+.tile span{display:block;font-size:3rem;line-height:1.1}
+.tile small{display:block;font-weight:500;opacity:.95}
+.t1{background:#1E6FD9}.t2{background:#E0483B}.t3{background:#1F8F55}.t4{background:#7B5CE0}.t5{background:#C26A00}
+.msg{min-height:3em;border-radius:16px;padding:8px 14px;background:var(--card);border:3px solid var(--line);margin:8px 0}
+.msg.ok{border-color:var(--leaf)}.msg.no{border-color:var(--coral)}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.item{width:104px;min-height:104px;background:var(--card);border:3px solid var(--line);border-radius:20px;padding:6px;text-align:center;touch-action:none;user-select:none;position:relative}
+.item i{display:block;font-style:normal;font-size:2.6rem}
+.item small{font-size:.8rem;line-height:1.1;display:block}
+.item.drag{z-index:9;box-shadow:0 12px 24px rgba(0,0,0,.3);cursor:grabbing}
+.zone{border:4px dashed var(--blue);border-radius:26px;padding:12px;margin-top:14px;min-height:150px;background:var(--card)}
+.zone .item{border-color:var(--leaf);opacity:.95}
+.shake{animation:sh .35s}
+@keyframes sh{25%{translate:-8px}75%{translate:8px}}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:10px}
+.card{min-height:120px;border-radius:20px;border:3px solid var(--line);background:var(--grape);color:#fff;font-weight:700;padding:8px;font-size:1rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}
+.card.up{background:var(--card);color:var(--ink)}
+.card.up i{font-size:2.4rem;font-style:normal}
+.card.got{border-color:var(--leaf);background:#D9F5E5;color:#14442B}
+.card:not(.up) i{font-size:2.6rem;font-style:normal}
+.step{display:block;width:100%;text-align:left;background:var(--card);border:3px solid var(--line);border-radius:16px;padding:10px 14px;margin:8px 0}
+.step.done{border-color:var(--leaf);background:#D9F5E5;color:#14442B}
+.word{display:flex;gap:6px;justify-content:center;flex-wrap:wrap;margin:14px 0}
+.word b{width:2.2rem;height:2.8rem;border-bottom:5px solid var(--ink);text-align:center;font-size:2rem;line-height:2.6rem}
+.big{font-size:4rem;text-align:center;line-height:1}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:10px 0}
+.opt{background:var(--blue);color:#fff;border:0;border-radius:18px;padding:12px;font-weight:700;font-size:1.1rem;box-shadow:0 4px 0 rgba(0,0,0,.25)}
+.opt.good{background:var(--leaf)}.opt.bad{background:#C73A2E}
+.win{text-align:center;background:var(--card);border:4px solid var(--sun);border-radius:26px;padding:18px;margin-top:14px}
+.btn{background:var(--leaf);color:#fff;border:0;border-radius:99px;padding:10px 22px;font-weight:800;margin:4px}
+.btn.alt{background:var(--blue)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<header><b>🛟 Ready, Set, Safe!</b><span id="starbox">⭐ <span id="stars">0</span></span></header>
+<main id="view"></main>
+<script>
+const $=s=>document.querySelector(s), sh=a=>[...a].sort(()=>Math.random()-.5), view=$('#view');
+let stars=0; try{stars=+localStorage.getItem('rss')||0}catch(e){}
+$('#stars').textContent=stars;
+function star(n){stars+=n;$('#stars').textContent=stars;try{localStorage.setItem('rss',stars)}catch(e){}}
+function say(t,ok){const m=$('#msg');m.textContent=t;m.className='msg '+(ok?'ok':'no')}
+function shell(title,intro,body){view.innerHTML=`<button class="back" onclick="home()">← Back to games</button><h2>${title}</h2><div id="msg" class="msg" aria-live="polite">${intro}</div>${body}`;scrollTo(0,0)}
+function win(text,again){const d=document.createElement('div');d.className='win';d.innerHTML=`<div class="big">🎉</div><h2>${text}</h2><button class="btn" id="ag">Play again</button><button class="btn alt" onclick="home()">More games</button>`;view.appendChild(d);$('#ag').onclick=again;d.scrollIntoView({behavior:'smooth'})}
+function home(){
+view.innerHTML=`<h1>Be ready.<br>Be brave.<br>Be safe!</h1><p>Play 5 games to learn what to do in an earthquake, typhoon, flood, fire, or volcano eruption. Earn ⭐ stars as you go!</p>
+<div class="grid">
+<button class="tile t1" onclick="bag()"><span>🎒</span>Pack the Go-Bag<small>Drag the right things into the bag</small></button>
+<button class="tile t2" onclick="match()"><span>🃏</span>Match the Cards<small>Match each disaster to what to do</small></button>
+<button class="tile t3" onclick="steps()"><span>🧩</span>Step Puzzle<small>Put the safety steps in order</small></button>
+<button class="tile t4" onclick="word()"><span>🔤</span>Save the Word<small>Pick the missing letters</small></button>
+<button class="tile t5" onclick="quiz()"><span>⭐</span>Quiz Time<small>Show what you know</small></button>
+</div>`;scrollTo(0,0)}
+
+/* 1. GO-BAG (drag & drop, or tap) */
+const BAG=[['💧','Water',1,'Water keeps you healthy.'],['🔦','Flashlight',1,'Lights up the dark when power goes out.'],['🩹','First-aid kit',1,'Helps with scrapes and ouchies.'],['📻','Radio',1,'Hear news even when phones stop working.'],['🥫','Canned food',1,'Food that stays good for a long time.'],['🧣','Blanket',1,'Keeps you warm and cozy.'],['📣','Whistle',1,'A loud whistle helps rescuers find you.'],['📄','Family papers',1,'IDs and phone numbers help your family.'],['🎮','Video game',0,'No power to play, and it takes up space.'],['🍭','Pile of candy',0,'Not healthy food. Pack real food instead.'],['🛹','Skateboard',0,'Too big and heavy for a go-bag.'],['🎈','Balloons',0,'Fun, but they do not help you stay safe.']];
+function drag(el,fn){
+el.onpointerdown=e=>{e.preventDefault();el.setPointerCapture(e.pointerId);const sx=e.clientX,sy=e.clientY;let moved=false;el.classList.add('drag');
+el.onpointermove=v=>{const dx=v.clientX-sx,dy=v.clientY-sy;if(Math.abs(dx)+Math.abs(dy)>8)moved=true;el.style.transform=`translate(${dx}px,${dy}px)`};
+el.onpointerup=v=>{el.onpointermove=el.onpointerup=null;el.classList.remove('drag');el.style.transform='';el.style.pointerEvents='none';const t=document.elementFromPoint(v.clientX,v.clientY);el.style.pointerEvents='';fn(!moved||!!(t&&t.closest('#zone')))}};
+el.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fn(true)}}}
+function bag(){
+let left=BAG.filter(x=>x[2]).length;
+shell('🎒 Pack the Go-Bag','Drag things into the bag (or tap them). Only pack what helps you stay safe!',`<div class="row" id="pile"></div><div class="zone" id="zone"><b>🎒 My go-bag</b><div class="row" id="packed"></div></div>`);
+sh(BAG).forEach(([e,n,g,why])=>{const b=document.createElement('div');b.className='item';b.tabIndex=0;b.setAttribute('role','button');b.innerHTML=`<i>${e}</i><small>${n}</small>`;
+drag(b,hit=>{if(!hit||b.dataset.d)return;
+if(g){b.dataset.d=1;b.style.touchAction='';$('#packed').appendChild(b);b.onpointerdown=null;star(1);say(`Yes! ${n}: ${why}`,1);if(!--left){say('Your go-bag is ready! 🎉',1);win('Go-bag packed! You are a Safety Star!',bag)}}
+else{b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');say(`Not this one. ${n}: ${why}`,0)}});
+$('#pile').appendChild(b)})}
+
+/* 2. MATCH CARDS */
+const DIS=[['🌍','Earthquake','Drop, Cover, and Hold On'],['🔥','Fire','Get low and go outside'],['🌀','Typhoon','Stay inside, away from windows'],['🌊','Flood','Move to high ground'],['🌋','Volcano','Wear a mask and stay inside']];
+function match(){
+let open=[],lock=false,found=0,moves=0;
+shell('🃏 Match the Cards','Flip two cards. Match each disaster with what to do!',`<div class="cards" id="cards"></div>`);
+const cs=[];DIS.forEach((d,i)=>{cs.push([i,`<i>${d[0]}</i>${d[1]}`]);cs.push([i,d[2]])});
+sh(cs).forEach(([i,h])=>{const c=document.createElement('button');c.className='card';c.innerHTML='<i>❓</i>Flip me';c.onclick=()=>{
+if(lock||c.classList.contains('up')||c.classList.contains('got'))return;c.classList.add('up');c.innerHTML=h;open.push([c,i]);
+if(open.length==2){moves++;const[[a,x],[b,y]]=open;open=[];
+if(x==y){a.classList.add('got');b.classList.add('got');star(1);say(`Match! ${DIS[x][1]}: ${DIS[x][2]}.`,1);if(++found==DIS.length)win(`All matched in ${moves} tries!`,match)}
+else{lock=true;say('Not a match. Try again!',0);setTimeout(()=>{[a,b].forEach(k=>{k.classList.remove('up');k.innerHTML='<i>❓</i>Flip me'});lock=false},1100)}}};
+$('#cards').appendChild(c)})}
+
+/* 3. STEP PUZZLE */
+const SEQ=[['🌍 Earthquake',['Drop to your hands and knees','Cover your head and neck','Hold on to something sturdy','When shaking stops, go to an open space']],['🔥 Fire',['Shout "Fire!" and tell a grown-up','Get low and crawl under the smoke','Go outside and never go back in','Meet at your family meeting spot']],['🌀 Typhoon',['Listen to the radio for news','Get your go-bag ready','Stay inside, away from windows','Wait for the all-clear before going out']]];
+function steps(r=0){
+if(r>=SEQ.length){shell('🧩 Step Puzzle','Great job!','');return win('You put every step in order!',()=>steps(0))}
+const[t,s]=SEQ[r];let n=0;
+shell('🧩 Step Puzzle: '+t,'Tap the steps in the right order, starting with the first!',`<div id="list"></div>`);
+sh(s).forEach(x=>{const b=document.createElement('button');b.className='step';b.textContent=x;b.onclick=()=>{if(b.classList.contains('done'))return;
+if(x===s[n]){n++;b.classList.add('done');b.textContent=`${n}. ${x}`;star(1);say(n<s.length?'Correct! What comes next?':'All in order! 🎉',1);if(n==s.length)setTimeout(()=>steps(r+1),1200)}
+else{b.classList.remove('shake');void b.offsetWidth;b.classList.add('shake');say('Hmm, that one comes later. Try another!',0)}};$('#list').appendChild(b)})}
+
+/* 4. SAVE THE WORD (pick the missing letter) */
+const WORDS=[['WHISTLE','📣','Blow it loudly to call for help'],['FLASHLIGHT','🔦','Lights up the dark'],['SHELTER','🏠','A safe place to stay'],['EVACUATE','🏃','Leave quickly for a safe place'],['BLANKET','🧣','Keeps you warm'],['HELMET','⛑️','Protects your head']];
+function word(r=0,order=sh(WORDS).slice(0,4)){
+if(r>=order.length){shell('🔤 Save the Word','Finished!','');return win('You saved all the words!',()=>word())}
+const[w,e,h]=order[r];let i=0,lives=3;
+shell('🔤 Save the Word',`Pick the missing letter. Hint: ${h}.`,`<div class="big">${e}</div><div class="word" id="w"></div><div id="hp" class="big" style="font-size:2rem"></div><div class="opts" id="o"></div>`);
+function draw(){$('#w').innerHTML=[...w].map((c,k)=>`<b>${k<i?c:''}</b>`).join('');$('#hp').textContent='❤️'.repeat(lives)+'🤍'.repeat(3-lives);
+const L='ABCDEFGHIJKLMNOPQRSTUVWXYZ';const o=sh([w[i],...sh([...L].filter(c=>c!=w[i])).slice(0,3)]);
+$('#o').innerHTML='';o.forEach(c=>{const b=document.createElement('button');b.className='opt';b.textContent=c;b.onclick=()=>{
+if(c==w[i]){i++;if(i==w.length){draw();star(1);say(`You saved the word: ${w}!`,1);return setTimeout(()=>word(r+1,order),1400)}say('Yes! Keep going!',1);draw()}
+else{lives--;b.classList.add('bad');b.disabled=true;if(!lives){$('#hp').textContent='🤍🤍🤍';say(`Out of hearts! The word was ${w}. Next one!`,0);$('#o').innerHTML='';return setTimeout(()=>word(r+1,order),1800)}say('Oops, try another letter!',0);$('#hp').textContent='❤️'.repeat(lives)+'🤍'.repeat(3-lives)}};$('#o').appendChild(b)})}
+draw()}
+
+/* 5. QUIZ */
+const Q=[['You are inside when an earthquake starts. What do you do?',['Drop, Cover, and Hold On','Run to the window','Stand still and watch'],0,'Get under a sturdy table and protect your head and neck.'],
+['A typhoon is coming. Where is the safest place?',['Under a big tree','Inside, away from windows','Outside, playing'],1,'Strong winds can break windows and knock down branches.'],
+['There is flood water on the road. What should you do?',['Splash through it','Stay out of it','Ride your bike through it'],1,'Flood water can be strong, deep, and dirty.'],
+['The fire alarm rings at school. What do you do?',['Get your toys first','Hide under your desk','Line up and walk out calmly'],2,'Follow your teacher and go straight outside.'],
+['Which number can you call for emergencies in the Philippines?',['123','911','000'],1,'911 is the national emergency hotline. Ask a grown-up to call.'],
+['Volcano ash is falling. What helps most?',['Wear a mask and stay inside','Look at the ash up close','Open all the windows'],0,'Ash is bad to breathe in. A mask and closed windows help.'],
+['Why does your family pick a meeting spot?',['For a picnic','So everyone knows where to find each other','To hide from friends'],1,'If you get separated, you know where to go.']];
+function quiz(){
+const qs=sh(Q).slice(0,6);let i=0,ok=0;
+function ask(){
+if(i>=qs.length){shell('⭐ Quiz Time','Quiz done!','');return win(`You got ${ok} out of ${qs.length}!`,quiz)}
+const[q,o,a,why]=qs[i];
+shell(`⭐ Quiz Time: question ${i+1} of ${qs.length}`,q,`<div class="opts" id="o"></div>`);
+o.forEach((t,k)=>{const b=document.createElement('button');b.className='opt';b.textContent=t;b.onclick=()=>{
+[...document.querySelectorAll('.opt')].forEach((x,j)=>{x.disabled=true;if(j==a)x.classList.add('good')});
+if(k==a){ok++;star(1);b.classList.add('good');say('Correct! '+why,1)}else{b.classList.add('bad');say('Not quite. '+why,0)}
+const n=document.createElement('button');n.className='btn alt';n.textContent=i+1<qs.length?'Next question':'See my score';n.onclick=()=>{i++;ask()};view.appendChild(n);n.focus()};$('#o').appendChild(b)})}
+ask()}
+home();
+</script>
+</body>
+</html>
